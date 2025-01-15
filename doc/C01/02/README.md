@@ -118,8 +118,8 @@ final 키워드
 
 > ex
 ```java
-final int wifeCount = 0;
-wifeCount = 20; //에러남
+final int fingerCount = 10;
+fingerCount = 20; //에러남
 ```
 - 바꾸려고 하면 에러로 잡아줌
 
