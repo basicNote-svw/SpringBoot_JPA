@@ -8,10 +8,10 @@ import jakarta.persistence.Id;
 import java.util.Date;
 
 @Entity
-public class notice {
+public class Notice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String title;
-    private Date date;
+    public Long id;
+    public String title;
+    public Date date;
 }

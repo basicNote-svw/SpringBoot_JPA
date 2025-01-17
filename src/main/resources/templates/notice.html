@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link href="/css/notice.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <table>
+            <tr style="background: lightgray">
+                <th class="id">id</th>
+                <th>글제목</th>
+                <th>날짜</th>
+            </tr>
+            <tr th:each="i : ${notices}">
+                <td class="id" th:text="${i.id}">id</td>
+                <td th:text="${i.title}">글제목</td>
+                <td th:text="${i.date}">날짜</td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>
