@@ -6,8 +6,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -31,6 +33,18 @@ public class ItemController {
 //    ItemController(ItemRepository itemRepository) {
 //        this.itemRepository = itemRepository;
 //    }
+
+    @GetMapping("/detail/{id}")
+    String detail(@PathVariable Long id, Model model) {
+        Optional<Item> result = itemRepository.findById(id);
+        if(result.isPresent()) {
+            System.out.println(result.get());
+            model.addAttribute("data", result.get());
+            return "detail";
+        } else {
+            return "redirect:/list";
+        }
+    }
 
 }
 
