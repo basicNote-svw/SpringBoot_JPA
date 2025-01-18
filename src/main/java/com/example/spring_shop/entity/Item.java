@@ -1,16 +1,20 @@
 package com.example.spring_shop.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
+    private Long id;
 
     @Column(length = 200)
-    public String title;
+    private String title;
 
     @Column(nullable = false)
-    public Integer price;
+    private Integer price;
 }

@@ -17,7 +17,8 @@ public class NoticeController {
     @GetMapping("/notice")
     String notice(Model model) {
         List<Notice> result = noticeRepository.findAll();
-        System.out.println(result.get(0).title);
+//        System.out.println(result.get(0).title);   // 이번 주 할인이벤트합니다
+        System.out.println(result.get(0).getTitle());   // 이번 주 할인이벤트합니다
         model.addAttribute("notices", result);
         return "notice";
     }
