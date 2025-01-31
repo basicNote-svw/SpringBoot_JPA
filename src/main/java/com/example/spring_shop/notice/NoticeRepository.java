@@ -1,6 +1,5 @@
-package com.example.spring_shop.repository;
+package com.example.spring_shop.notice;
 
-import com.example.spring_shop.entity.Notice;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface NoticeRepository extends JpaRepository<Notice, Long> {

@@ -1,20 +1,13 @@
-package com.example.spring_shop.controller;
+package com.example.spring_shop.item;
 
-import com.example.spring_shop.entity.Item;
-import com.example.spring_shop.repository.ItemRepository;
-import com.example.spring_shop.service.ItemService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -33,10 +26,10 @@ public class ItemController {
     String list(Model model) {
 //        List<Item> result = itemRepository.findAll();
         List<Item> result = itemService.getAllItems();
-        System.out.println(result); // [com.example.spring_shop.entity.Item@6e8e6f05, com.example.spring_shop.entity.Item@679ad4a3, com.example.spring_shop.entity.Item@6cf1174]
-        System.out.println(result.get(0));          // com.example.spring_shop.entity.Item@6f2a15fe
+//        System.out.println(result); // [com.example.spring_shop.item.Item@6e8e6f05, com.example.spring_shop.item.Item@679ad4a3, com.example.spring_shop.item.Item@6cf1174]
+//        System.out.println(result.get(0));          // com.example.spring_shop.item.Item@6f2a15fe
 //        System.out.println(result.get(0).title);    // 셔츠
-        System.out.println(result.get(0).getTitle());   // 셔츠
+//        System.out.println(result.get(0).getTitle());   // 셔츠
 //        model.addAttribute("name", "롱스커트");
         model.addAttribute("items", result);
         return "list";
@@ -61,9 +54,14 @@ public class ItemController {
 //            );
 //        }
         Item item = itemService.getItemById(id);
-        System.out.println(item);
+//        System.out.println(item);
         model.addAttribute("data", item);
         return "detail";
+    }
+
+    @GetMapping("/write")
+    String write() {
+        return "write";
     }
 
     @PostMapping("/add")
@@ -113,5 +111,22 @@ public class ItemController {
         return "redirect:/list";
     }
 
+//    @PostMapping("/test1")
+//    String test1(@RequestBody Map<String, Object> body) {
+//        System.out.println(body.get("title"));
+//        return "redirect:/list";
+//    }
+
+    @PostMapping("/test1")
+    String test(@RequestBody Item body) {
+        System.out.println(body);
+        return "redirect:/list";
+    }
+
+    @DeleteMapping("/item")
+    ResponseEntity<String> deleteItem(@RequestParam Long id) {
+        itemRepository.deleteById(id);
+        return ResponseEntity.status(200).body("삭제완료");
+    }
 }
 

@@ -232,7 +232,7 @@ public class Item {
 ```java
 package com.example.spring_shop.repository;
 
-import com.example.spring_shop.entity.Notice;
+import com.example.spring_shop.notice.Notice;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface NoticeRepository extends JpaRepository<Notice, Long> {
@@ -290,8 +290,8 @@ th, td {
 ```java
 package com.example.spring_shop.controller;
 
-import com.example.spring_shop.entity.Notice;
-import com.example.spring_shop.repository.NoticeRepository;
+import com.example.spring_shop.notice.Notice;
+import com.example.spring_shop.notice.NoticeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

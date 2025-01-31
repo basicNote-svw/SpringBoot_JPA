@@ -1,9 +1,5 @@
-package com.example.spring_shop.controller;
+package com.example.spring_shop.notice;
 
-import com.example.spring_shop.entity.Notice;
-import com.example.spring_shop.repository.NoticeRepository;
-import com.example.spring_shop.service.NoticeService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

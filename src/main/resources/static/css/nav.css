@@ -9,6 +9,7 @@
 .nav a {
     margin-right: 10px;
     text-decoration : none;
+    color: black;
     font-weight : 400;
     letter-spacing : -0.5px;
 }

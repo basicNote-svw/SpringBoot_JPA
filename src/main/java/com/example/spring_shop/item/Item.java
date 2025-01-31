@@ -1,4 +1,4 @@
-package com.example.spring_shop.entity;
+package com.example.spring_shop.item;
 
 import jakarta.persistence.*;
 import lombok.Getter;

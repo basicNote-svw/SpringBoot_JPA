@@ -12,3 +12,28 @@
     text-decoration: none;
     color: black;
 }
+
+.btn-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8;
+}
+
+.edit-btn,
+.del-btn {
+    width: 30px;
+    height: 30px;
+    background: none;
+    font-size: 20px;
+    line-height: 1; /* 이모지의 높이를 균일하게 */
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+}
+
+.del-btn {
+    margin-left: 5px;
+    cursor: pointer;
+}

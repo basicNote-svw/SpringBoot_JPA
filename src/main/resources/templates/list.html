@@ -20,9 +20,27 @@
                 <h4 th:text="${i.title}">바지</h4>
             </a>
             <p th:text="${i.price} + '원'">70000원</p>
-            <a class="edit" th:href="@{'/edit/' + ${i.id}}">✏️</a>
+            <div class="btn-box">
+                <a class="edit-btn" th:href="@{'/edit/' + ${i.id}}">✏️</a>
+                <button class="del-btn" th:onclick="fetch('/item?id=[[${i.id}]]', {method: 'DELETE'})">🗑️</button>
+            </div>
         </div>
     </div>
+
+    <script>
+//        document.querySelectorAll('.del-btn')[0].addEventListener('click', function(){
+            /*
+            fetch('/test1', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({title: "투피스", price: 80000})
+            })
+            */
+//            fetch('/test1?title=투피스&price=80000')
+//        })
+    </script>
 
 </body>
 </html>

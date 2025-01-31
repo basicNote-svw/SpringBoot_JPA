@@ -1,7 +1,5 @@
-package com.example.spring_shop.service;
+package com.example.spring_shop.notice;
 
-import com.example.spring_shop.entity.Notice;
-import com.example.spring_shop.repository.NoticeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -1,4 +1,4 @@
-package com.example.spring_shop.entity;
+package com.example.spring_shop.notice;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

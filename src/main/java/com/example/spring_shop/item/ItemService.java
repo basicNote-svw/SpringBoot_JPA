@@ -1,7 +1,5 @@
-package com.example.spring_shop.service;
+package com.example.spring_shop.item;
 
-import com.example.spring_shop.entity.Item;
-import com.example.spring_shop.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
