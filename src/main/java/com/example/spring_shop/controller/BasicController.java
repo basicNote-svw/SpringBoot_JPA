@@ -1,5 +1,6 @@
 package com.example.spring_shop.controller;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -31,5 +32,12 @@ public class BasicController {
     String date() {
 //        return LocalDateTime.now().toString();
         return ZonedDateTime.now().toString();
+    }
+
+    @GetMapping("/test2")
+    String test2() {
+        var encoder = new BCryptPasswordEncoder();
+        System.out.println(encoder.encode("qwer1234"));
+        return "redirect:/list";
     }
 }
