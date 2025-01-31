@@ -2,19 +2,32 @@ package com.example.spring_shop.controller;
 
 import com.example.spring_shop.entity.Item;
 import com.example.spring_shop.repository.ItemRepository;
+import com.example.spring_shop.service.ItemService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
 
 @Controller
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class ItemController {
     private final ItemRepository itemRepository;
+    private final ItemService itemService;
+
+    @Autowired
+    ItemController(ItemRepository itemRepository, ItemService itemService) {
+        this.itemRepository = itemRepository;
+        this.itemService = itemService;
+    }
 
     @GetMapping("/list")
     String list(Model model) {
@@ -42,8 +55,40 @@ public class ItemController {
             model.addAttribute("data", result.get());
             return "detail";
         } else {
-            return "redirect:/list";
+            throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "404 에러 발생"
+            );
         }
+    }
+
+    @PostMapping("/add")
+        // 방법1
+//    String writePost(@RequestParam String title, @RequestParam Integer price) {
+//        System.out.println(title + " " + price);
+//        Item item = new Item();
+//        item.setTitle(title);
+//        item.setPrice(price);
+//        itemRepository.save(item);
+//        return "redirect:/list";
+//    }
+        // 방법2
+//    String writePost(@RequestParam Map formData) {
+////        var test = new HashMap<>();
+//        HashMap<String, Object> test = new HashMap<>();
+//        test.put("title", "모자");
+//        test.put("price", 10000);
+//        System.out.println(test);   // {price=10000, title=모자}
+//        System.out.println(test.get("title"));  // 모자
+//        return "redirect:/list";
+//    }
+        // 방법3
+//    String writePost(@ModelAttribute Item item) {
+//        itemRepository.save(item);
+//        return "redirect:/list";
+//    }
+    String writePost(String title, Integer price) {
+        itemService.saveItem(title, price);
+        return "redirect:/list";
     }
 
 }
