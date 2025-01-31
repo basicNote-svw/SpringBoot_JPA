@@ -30,4 +30,16 @@ public class ItemService {
         item.setPrice(price);
         itemRepository.save(item);
     }
+
+    public void editItem(String title, Integer price, Long id) {
+        if(title.length()>=100 || price<=0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "값을 다시 확인하세요");
+        } else {
+            Item item = new Item();
+            item.setId(id);
+            item.setTitle(title);
+            item.setPrice(price);
+            itemRepository.save(item);
+        }
+    }
 }

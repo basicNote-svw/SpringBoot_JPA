@@ -96,5 +96,22 @@ public class ItemController {
         return "redirect:/list";
     }
 
+    @GetMapping("/edit/{id}")
+    String edit(@PathVariable Long id, Model model) {
+        Optional<Item> result = Optional.ofNullable(itemService.getItemById(id));
+        if(result.isPresent()) {
+            model.addAttribute("data", result.get());
+            return "edit";
+        } else {
+            return "redirect:/list";
+        }
+    }
+
+    @PostMapping("/edit")
+    String editItem(String title, Integer price, Long id) {
+        itemService.editItem(title, price, id);
+        return "redirect:/list";
+    }
+
 }
 

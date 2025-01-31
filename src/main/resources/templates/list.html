@@ -20,6 +20,7 @@
                 <h4 th:text="${i.title}">바지</h4>
             </a>
             <p th:text="${i.price} + '원'">70000원</p>
+            <a class="edit" th:href="@{'/edit/' + ${i.id}}">✏️</a>
         </div>
     </div>
 
