@@ -31,7 +31,8 @@ public class ItemController {
 
     @GetMapping("/list")
     String list(Model model) {
-        List<Item> result = itemRepository.findAll();
+//        List<Item> result = itemRepository.findAll();
+        List<Item> result = itemService.getAllItems();
         System.out.println(result); // [com.example.spring_shop.entity.Item@6e8e6f05, com.example.spring_shop.entity.Item@679ad4a3, com.example.spring_shop.entity.Item@6cf1174]
         System.out.println(result.get(0));          // com.example.spring_shop.entity.Item@6f2a15fe
 //        System.out.println(result.get(0).title);    // 셔츠
@@ -49,16 +50,20 @@ public class ItemController {
 
     @GetMapping("/detail/{id}")
     String detail(@PathVariable Long id, Model model) {
-        Optional<Item> result = itemRepository.findById(id);
-        if(result.isPresent()) {
-            System.out.println(result.get());
-            model.addAttribute("data", result.get());
-            return "detail";
-        } else {
-            throw new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "404 에러 발생"
-            );
-        }
+//        Optional<Item> result = itemRepository.findById(id);
+//        if(result.isPresent()) {
+//            System.out.println(result.get());
+//            model.addAttribute("data", result.get());
+//            return "detail";
+//        } else {
+//            throw new ResponseStatusException(
+//                HttpStatus.NOT_FOUND, "404 에러 발생"
+//            );
+//        }
+        Item item = itemService.getItemById(id);
+        System.out.println(item);
+        model.addAttribute("data", item);
+        return "detail";
     }
 
     @PostMapping("/add")
