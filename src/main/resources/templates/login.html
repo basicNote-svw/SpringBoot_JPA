@@ -10,6 +10,16 @@
 </head>
 <body>
     <div th:replace="~{nav.html :: navbar}"></div>
-    <h4>안녕!</h4>
+    <h3>로그인</h3>
+
+    <div th:if="${param.error}">
+        <h4>아이디나 비밀번호를 다시 확인해주세요</h4>
+    </div>
+
+    <form action="/login" method="POST">
+        <input name="userName">
+        <input name="password" type="password">
+        <button type="submit">전송</button>
+    </form>
 </body>
 </html>

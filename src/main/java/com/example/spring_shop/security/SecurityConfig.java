@@ -1,4 +1,4 @@
-package com.example.spring_shop;
+package com.example.spring_shop.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +17,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests((authorize) ->
                 authorize.requestMatchers("/**").permitAll()
         );
+        http.formLogin((formLogin) -> formLogin.loginPage("/login").defaultSuccessUrl("/").failureUrl("/fail"));
         return http.build();
     }
 

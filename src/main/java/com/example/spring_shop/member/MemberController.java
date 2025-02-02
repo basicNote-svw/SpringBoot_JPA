@@ -31,4 +31,9 @@ public class MemberController {
         memberService.saveMember(userName, password, displayName);
         return "redirect:/list";
     }
+
+    @GetMapping("/login")
+    public String login() {
+        return "login";
+    }
 }
