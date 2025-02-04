@@ -16,8 +16,9 @@
         <h4>아이디나 비밀번호를 다시 확인해주세요</h4>
     </div>
 
+    <!--  Spring Security는 기본적으로 username과 password라는 필드 이름을 사용  -->
     <form action="/login" method="POST">
-        <input name="userName">
+        <input name="username">
         <input name="password" type="password">
         <button type="submit">전송</button>
     </form>

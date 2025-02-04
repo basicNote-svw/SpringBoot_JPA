@@ -318,10 +318,303 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
 <br>
 
+loadUserByUsername 함수 완성하기
+---
+- loadUserByUsername 함수 완성
 
+  - DB에서 username을 가진 유저를 찾아와서 return new User(유저아이디, 비번, 권한)
 
+> MyUserDetailsService.java
+```java
+@Override
+public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    var result = memberRepository.findByUsername(username);
+    if (result.isEmpty()){  // Optional 은 if 써야 안전
+        throw new UsernameNotFoundException("그런 아이디 없음");
+    }
+    var user = result.get();
+    return new User(user.getUsername(), user.getPassword(), 권한목록);
+}
+```
+- Member 테이블 중에 username 컬럼에서 String username이 담긴 컬럼을 찾아오라고 함
 
- 
- 
- 
+  - 찾은 유저가 없으면 에러 띄우기
+
+  - new User() 안에 유저아이디, 비번, 권한을 담으면 끝입
+
+- 유저아이디, 비번을 스프링에서 내부적으로 유저가 제출한거랑 비교해보고 잘 맞으면 통과
+
+<br>
+
+- 권한 넣기
+```java
+@Override
+public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    (생략)
+    List<GrantedAuthority> 권한목록 = new ArrayList<>();
+    권한목록.add(new SimpleGrantedAuthority("일반유저"));
+    return new User(user.getUsername(), user.getPassword(), 권한목록);
+} 
+```
+- 권한도 new User() 안에 넣어야함
+
+  - 유저의 권한들이 뭔지 써놓은 리스트자료를 여기 넣으면 됨
+
+- new SimpleGrantedAuthority("일반유저") 이렇게 메모해서 집어넣으면 됨
+
+- 권한 : 특별한 코드적인 기능은 없고 이 유저가 무슨 유저인지 메모해놓는 것
+
+  - 유저가 일반유저인지, 관리자인지, 판매자인지 등 유저들을 분류하기 위한 메모
+
+- 좋은 점 : 나중에 컨트롤러에서 현재 유저의 로그인정보 출력 가능 
+
+  - 그 때 권한 메모해둔 것도 출력 가능
+
+    - 권한에 따라서 특정 페이지나 API를 못쓰게 차단시킬 수 있음
+
+<br>
+
+### 💡 유저에 따라서 다른 메모를 해주고 싶으면
+- if문 추가
+
+  - 특정 아이디를 가진 유저는 예를들어 "관리자"라고 메모
+
+  - DB에 특정 정보를 가지고 있는 유저는 "판매자"라고 메모
+
+<br>
+
+---
+
+<br>
+
+로그인
+---
+- 셋팅만 잘 해놓으면 로그인 기능구현 끝
+
+| -                    |
+|----------------------|
+| ![이미지](./img/03.png) |
+
+▲ 로그인 후 개발자도구 application 탭 들어가보면 쿠키가 생성되는 것 볼 수 있음
+
+- 로그인 실패해도 쿠키가 생기긴 하는데 로그인잘하면 세션아이디같은게 잘 적힌 입장권용 쿠키가 잘 생김
+
+- 이제 사이트 이용시 쿠키가 전송될텐데 그거 보고 서버에선 로그인여부를 판단할 수 있음
+
+<br>
+
+---
+
+<br>
+
+마이페이지 만들기
+---
+- 누가 /my-page 접속하면 마이페이지 보내주기
+
+```java
+@GetMapping("/my-page")
+public String myPage() {
+    return "mypage.html";
+}
+```
+- 이렇게 API를 만들어보면 /my-page 접속시 잘 보임
+
+- 이런 페이지들은 로그인한 유저만 볼 수 있게 만들어야함
+
+<br>
+
+---
+
+<br>
+
+로그인 중인 유저 확인
+---
+> MemberController.java
+```java
+@GetMapping("/my-page")
+public String myPage(Authentication auth) {
+  System.out.println(auth);
+  System.out.println(auth.getName()); //아이디출력가능
+  System.out.println(auth.isAuthenticated()); //로그인여부 검사가능
+  System.out.println(auth.getAuthorities().contains(new SimpleGrantedAuthority("일반유저")));
+  return "mypage.html";
+}
+```
+- 컨트롤러 안에서는 Authentication 타입붙은 파라미터 하나 추가
+
+  - 거기에 현재 유저의 로그인정보가 전부 들어있음
+
+- spring security가 자동으로 유저정보를 넣어준 것이라 사용만 하면 됨
+
+- getAuthorities() 쓰면 현재 유저의 권한 메모해둔 것도 출력가능
+
+- 회원기능들을 만들고 싶으면 auth 변수와 함께라면 쉽게 작성 가능
+
+  - 유저가 로그인안했으면 마이페이지 말고 로그인 페이지로 보내주기
+
+  - 글하나 작성할 때 누가 작성한 글인지 아이디도 함께 저장하기
+
+<br>
+
+---
+
+<br>
+
+html에서 유저정보 출력하려면
+---
+```html
+<span sec:authentication="principal"></span>
+<span sec:authentication="principal.username"></span>
+<span sec:authentication="principal.authorities"></span>
+```
+- 타임리프 사용시
+
+  - sec:authentication 문법 사용하면 현재 로그인 중인 유저정보 출력 가능
+
+  - 서버에서 직접 안보내도 되니까 편리함
+
+- REST API들은 서버가 이것저것 보내줘야 유저정보를 알 수 있음
+
+<br>
+
+```html
+<span sec:authorize="hasAuthority('일반유저')">특정권한이 있으면 보여주기</span>
+<div sec:authorize="isAuthenticated()">
+  로그인된 사람만 보여주기
+</div>
+```
+- 현재 유저가 로그인 되어있는 경우에만 특정 html을 보여주고 싶으면 
+
+  - `sec:authorize="isAuthenticated()"` 쓰고 그 안에 html 넣으면 됨
+
+- 현재 유저가 로그아웃 되어있는 경우에만 특정 html을 보여주고 싶으면
+
+- `sec:authorize="isAnonymous()"` 쓰고 그 안에 html 넣으면 됨
+
+- 유저가 특정 권한을 가진 경우에만 특정 html을 보여주고 싶으면
+
+  - `hasAuthority()` 쓰고 권한 이름 안에 넣으면 됨
+
+  - 안되면 thymeleaf-extras-springsecurity6 라이브러리 설치 잘했나 확인
+
+<br>
+
+---
+
+<br>
+
+로그아웃 방법
+---
+> SecurityConfig.java
+```java
+http.logout( logout -> logout.logoutUrl("/logout") );
+```
+- /logout으로 GET요청을 날리는 경우 로그아웃 시켜줌
+
+<br>
+
+---
+
+<br>
+
+API마다 로그인검사하기 귀찮으면
+---
+```java
+@PreAuthorize("isAuthenticated()")
+@GetMapping("/admin")
+컨트롤러함수(){
+    어쩌구저쩌구
+}
+```
+- @PreAuthorize() annotation
+
+  - API마다 붙일 수 있고 Controller 클래스 위에도 붙일 수 있음
+
+  - 소괄호 안에 있는 코드를 실행해보고 이게 참인 경우에만 밑에 있는 API를 실행해줌
+
+<br>
+
+> 소괄호 안에 넣을 수 있는 것들
+```java
+@PreAuthorize("isAuthenticated()")
+@PreAuthorize("isAnonymous()")
+@PreAuthorize("hasAuthority('어쩌구')")
+```
+- 각각 유저가 로그인 상태인지
+
+- 로그아웃 상태인지
+
+- '어쩌구'라는 authority를 가지고 있는지 확인 가능
+
+- 참인 경우에만 API를 동작시켜주는 annotation
+
+- 여러 조건을 넣고 싶으면 || 아니면 && 연산자로 이어붙이면 됨
+
+- if문의 조건식이랑 거의 동일하게 쓰면 되는데 안에 들어갈 수 있는게 더 많음
+
+  - 여러 API들에 로그인검사 로직을 일일이 작성하기 귀찮을 때 찾아서 사용
+
+<br>
+
+---
+
+<br>
+
+응용
+---
+
+### Q1. 사이트 상단 navbar에 현재 로그인된 유저의 아이디를 출력해주려면?
+
+- 서버에서 보내줘도 되는데 Thymeleaf 문법 써도 편리
+
+```html
+<span sec:authentication="principal.username"></span>
+```
+- 상단바 안에 코드 추가
+
+<br>
+
+### Q2. 사이트 상단에 로그아웃 버튼과 기능을 생성
+- 로그인한 유저에만 보여야함
+
+  - Thymeleaf 문법 사용
+
+```html
+<div sec:authorize="isAuthenticated()">
+  <a href="/logout">로그아웃</a>
+</div>
+```
+- a태그 쓰면 GET 요청을 쉽게 날릴 수 있음
+
+<br>
+
+### Q3. 로그인 중인 유저는 /register 페이지 접속시 /list 페이지로 보내주려면?
+
+- Controller 에서 현재 유저의 로그인정보 확인 가능
+
+```java
+if (auth.isAuthenticated()){
+    return "redirect:/list";
+}
+```
+- API 안에 코드 추가
+
+<br>
+
+### Q4. 상품하나 추가하는 기능 만들 때 어떤 유저가 작성했는지 아이디도 함께 집어넣고 싶으면?
+
+- Item 테이블에 아이디 저장할 컬럼도 하나 새로 생성
+
+  - Item 테이블에 컬럼 하나 만들고
+
+  - 행 하나 추가할 때 auth.getName()을 집어넣으라고 코드 작성
+
+- 뭔가 만들어놨으면 항상 나쁜유저처럼 테스트해봐야 안전한 사이트가 됨
+
+<br>
+
+---
+
+<br>
+
 

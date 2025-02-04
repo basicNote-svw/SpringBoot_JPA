@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link href="/css/nav.css" rel="stylesheet">
+</head>
+<body>
+    <div th:replace="~{nav.html :: navbar}"></div>
+    <h3>마이페이지</h3>
+
+    <div sec:authentication="principal"></div>
+    <div sec:authentication="principal.username"></div>
+    <div sec:authorize="hasAuthority('일반유저')">
+        <h4>이 유저는 일반유저 권한입니다</h4>
+    </div>
+</body>
+</html>
