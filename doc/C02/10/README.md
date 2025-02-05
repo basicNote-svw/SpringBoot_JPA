@@ -489,7 +489,7 @@ html에서 유저정보 출력하려면
 
 - 현재 유저가 로그아웃 되어있는 경우에만 특정 html을 보여주고 싶으면
 
-- `sec:authorize="isAnonymous()"` 쓰고 그 안에 html 넣으면 됨
+  - `sec:authorize="isAnonymous()"` 쓰고 그 안에 html 넣으면 됨
 
 - 유저가 특정 권한을 가진 경우에만 특정 html을 보여주고 싶으면
 
@@ -617,4 +617,318 @@ if (auth.isAuthenticated()){
 
 <br>
 
+- 로그인기능 쓰다보면 불편한 점
 
+  - 유저의 아이디랑 권한 정도만 나온다는 것
+
+  - 유저의 displayName 등을 컨트롤러에서 출력하고 싶으면?
+
+    - 유저의 username은 아니까 그거 가지고 DB에서 출력해보면 되긴 하는데 더 쉬운 방법 존재
+
+<br>
+
+auth 변수에 유저정보 더 집어넣기
+---
+- 왜 유저 아이디만 출력가능할까?
+
+> loadUserByUsername() 함수
+```java
+public UserDetails loadUserByUsername() {
+    (생략)
+    return new User(result.username, result.password, authorities);
+}
+```
+- return 한 내용이 컨트롤러에 있던 Authentication 변수에 들어가는 식으로 동작
+
+  - 컨트롤러에서 유저이름이랑 authority 정도만 출력 가능
+
+- 여기다가 추가 정보를 더 넣어주면 됨
+
+- User 클래스에 미리 정의된 변수들만 집어넣을 수 있음
+
+  - User 클래스 정의된 부분 찾아가서 직접 소스코드를 수정해도 되지만 라이브러리 코드를 직접 수정하는건 좋지않음
+
+    - 나중에 라이브러리 업데이트하면 코드가 꼬일 수도 있음
+
+- 직접 User 클래스랑 비슷한걸 하나 만들면 됨
+
+<br>
+
+```java
+public UserDetails loadUserByUsername()  {
+  (생략)
+  return new CustomUser(); //궁시렁댐
+}
+
+class CustomUser {
+
+}
+```
+- 아무렇게나 만들어서 User 자리에 집어넣으면 "User 넣어야하는 자리에 이상한 클래스 넣지마라"고 경고뜸
+
+```java
+public UserDetails loadUserByUsername()  {
+  (생략)
+  return new CustomUser();
+}
+
+class CustomUser extends User{
+
+}
+```
+- 클래스 만들 때 `extends 다른클래스명` 문법
+
+  - 다른 클래스에 있던 변수 함수를 그대로 전부 복사해올 수 있음
+
+- 위처럼 User 클래스에 있던걸 복사해버리면 User 클래스와 비슷하게 생겼으니까 경고 안뜸
+
+- xtends를 쓰면 항상 `super()` 문법을 함께 써야함
+
+  - 에디터에서 super 쓰라고 제안할 것임 → 자동적용 클릭
+
+<br>
+
+> super()
+```java
+public UserDetails loadUserByUsername()  {
+  (생략)
+  return new CustomUser();
+}
+
+class CustomUser extends User {
+  public CustomUser(String username,
+  String password,
+  List<GrantedAuthority> authorities ) {
+    super(username, password, authorities);
+  }
+}
+```
+- super() : 복사해온 클래스의 constructor라는 뜻
+
+- 위 코드에선 super()는 User클래스의 constructor
+
+  - 해석 : `앞으로 CustomUser 사용할 때 파라미터 3개 넣으면 그걸 User의 constructor에도 그대로 넣어달라`는 뜻
+
+- 클래스를 복사해올 때 그 원본 클래스의 constructor기능을 똑같이 유지해주는게 좋기 때문
+
+  - User 클래스와 비슷하게 완벽위장가능
+
+<br>
+
+> 다른 클래스를 복사하고 싶으면 extends와 super()를 이용
+```java
+public UserDetails loadUserByUsername()  {
+  CustomUser customUser = new CustomUser(result.username, result.password, authorities);
+  customUser.id = result.getId();
+  customUser.displayName = result.getDisplayName();
+  return customUser;
+}
+
+class CustomUser extends User {
+  public Long id;
+  public String displayName;
+  public CustomUser(String username,
+  String password,
+  List<GrantedAuthority> authorities ) {
+    super(username, password, authorities);
+  }
+}
+```
+- 클래스에 id, displayName 이런 변수 추가
+
+  - 방금 만든 커스텀 클래스에 추가
+
+- 이제 유저의 id, displayName을 집어넣어서 new User() 대신 집어넣을 수 있음
+
+<br>
+
+---
+
+<br>
+
+타입캐스팅
+---
+- customUser 에 들어있던 정보
+
+  - 컨트롤러에서 auth.getPrincipal() 출력하면 사용 가능
+
+    - `auth.getPrincipal().displayName`
+
+- 주의 : 타입 확인해보면 Object
+
+  - 점찍어서 displayName 출력 불가
+
+- 코드 짜다보면 타입이 이상하거나 마음에 안드는 경우
+
+  - 타입을 맘대로 변환하는 것도 가능 ⇒ 타입캐스팅
+
+<br>
+
+> API 내부
+```java
+CustomUser user = (CustomUser) auth.getPrincipal();
+System.out.println(user.displayName);
+```
+- 자료 왼쪽에다가 `(타입명)` : 타입을 강제로 바꿔줄 수 있음
+
+- `getPrincipal()` 등 우리가 직접 만든게 아니라 타입을 수정하기 어렵다면
+
+  - 타입캐스팅해서 쓸 수도 있음
+
+- Spring security에선 getPrincipal() 사용시 타입캐스팅하는걸 권장함
+
+<br>
+
+---
+
+<br>
+
+세션 유지시간 설정가능
+---
+- 로그인 하면 누가 언제 로그인했는지 저장해두는 세션 데이터가 하나 생성됨
+
+  - 세션 데이터를 얼마 동안 유지해줄지도 맘대로 설정가능
+
+<br>
+
+> application.properties
+```properties
+server.servlet.session.timeout=5s
+server.servlet.session.cookie.max-age=5s
+```
+- application.properties 파일열어서 코드 추가
+
+  - 5s 적으면 5초 지나면 로그인이 자동으로 풀림
+
+  - 1m 적으면 1분 지나면 로그인이 자동으로 풀림
+
+<br>
+
+---
+
+<br>
+
+DB persist
+---
+- 사용자의 세션 데이터를 컴퓨터의 메모리 아니면 파일하나 만들어서 임시로 저장하면
+
+  - 불안정하기 때문에 DB에 세션 데이터를 저장해두는게 안정적
+
+- `spring-session-jdbc` 라이브러리 설치하면 자동
+
+<br>
+
+> build.gradle
+```gradle
+implementation 'org.springframework.session:spring-session-jdbc'
+```
+- 라이브러리 하나 추가
+
+<br>
+
+> application.properties
+```properties
+spring.session.jdbc.initialize-schema=always
+```
+- application.properties 파일에 추가
+
+- 세션 데이터용 테이블도 DB에 하나 생성
+
+- 여기까지 하면 DB에 세션데이터가 자동으로 보관됨
+
+<br>
+
+---
+
+<br>
+
+CSRF 토큰
+---
+- 조금 더 안전한 사이트를 만들고 싶으면 CSRF 기능을 켜놓으면 됨
+
+  - 다른 사이트에서 내 사이트를 원격으로 조작질하는걸 막을 수 있음
+
+<br>
+
+> SecurityConfig.java
+```java
+public class SecurityConfig {
+  //추가
+  @Bean
+  public CsrfTokenRepository csrfTokenRepository() {
+    HttpSessionCsrfTokenRepository repository = new HttpSessionCsrfTokenRepository();
+    repository.setHeaderName("X-XSRF-TOKEN");
+    return repository;
+  }
+}
+```
+- SecurityConfig 클래스에 함수 하나 추가
+
+<br>
+
+>> SecurityConfig.java 의 filterChain 함수 안
+```java
+http.csrf(csrf -> csrf.csrfTokenRepository(csrfTokenRepository())
+.ignoringRequestMatchers("/login")
+)
+```
+
+<br>
+
+> login.html
+```html
+<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+```
+- \<form> 태그마다 넣어주면 서버에서 CSRF 토큰 발급
+
+  - \<form> 전송시 자동으로 서버에서 전달됨
+
+<br>
+
+| -                    |
+|----------------------|
+| ![이미지](./img/04.png) |
+
+<br>
+
+- 이제 내 \<form> 이 아니라 다른 이상한 방법으로 폼을 전송하면
+
+  - CSRF 토큰이 없기 때문에 403에러를 내면서 차단됨
+
+- 앞으로 모든 폼과 AJAX 요청에 CSRF 토큰을 서버에서 받아온 다음에 그걸 함께 전송해야 함
+
+- 참고 : 페이지 접속할 때 마다 매번 다르게 토큰을 만들어주는 식으로 코드짜면
+
+  - 더 안전한 사이트를 만들 수 있음
+
+<br>
+
+---
+
+<br>
+
+정리
+---
+### 1. 남이 만든 클래스를 수정하고 싶으면 원본을 수정하는 것 보다는 extends로 복사해서 새로 클래스를 만드는 방법 사용
+
+<br>
+
+### 2. extends로 복사할 때 super를 사용해서 constructor도 복사
+
+<br>
+
+### 3. 세션 유효기간 설정도 가능
+
+<br>
+
+### 4. 세션 데이터를 안전하게 DB에 저장도 가능
+
+<br>
+
+### 5. CSRF 기능 사용시 안전한 사이트만들 수 있음
+
+<br>
+
+### 6. 라이브러리 세부 문법들은 AI에게 물어보거나 찾아보면 되는 것일 뿐 외울 필요 X
+
+<br>

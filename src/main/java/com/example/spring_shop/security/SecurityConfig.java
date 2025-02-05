@@ -7,6 +7,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
+import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 
 @Configuration
 @EnableWebSecurity
@@ -24,6 +26,16 @@ public class SecurityConfig {
         );
         http.formLogin((formLogin) -> formLogin.loginPage("/login").defaultSuccessUrl("/"));
 //    .usernameParameter("userName")  // 사용자 정의 필드 이름 변경가능
+        http.csrf(csrf -> csrf.csrfTokenRepository(csrfTokenRepository())
+                .ignoringRequestMatchers("/login")
+        );
         return http.build();
+    }
+
+    @Bean
+    public CsrfTokenRepository csrfTokenRepository() {
+        HttpSessionCsrfTokenRepository repository = new HttpSessionCsrfTokenRepository();
+        repository.setHeaderName("X-XSRF-TOKEN");
+        return repository;
     }
 }

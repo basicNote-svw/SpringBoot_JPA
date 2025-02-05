@@ -18,6 +18,7 @@
 
     <!--  Spring Security는 기본적으로 username과 password라는 필드 이름을 사용  -->
     <form action="/login" method="POST">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
         <input name="username">
         <input name="password" type="password">
         <button type="submit">전송</button>

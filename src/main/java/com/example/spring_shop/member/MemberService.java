@@ -10,16 +10,16 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public void saveMember(String userName, String password, String displayName) throws Exception {
-        var result = memberRepository.findByUserName(userName);
+    public void saveMember(String username, String password, String displayName) throws Exception {
+        var result = memberRepository.findByUsername(username);
         if(result.isPresent()) {
             throw new Exception("이미 존재하는 아이디입니다");
         }
-        if(userName.length() < 8 || password.length() < 8) {
+        if(username.length() < 8 || password.length() < 8) {
             throw new Exception("8자 이상 입력하세요");
         }
         Member member = new Member();
-        member.setUserName(userName);
+        member.setUsername(username);
 //        var hash = new BCryptPasswordEncoder().encode(password);
         var hash = passwordEncoder.encode(password);
         member.setPassword(hash);

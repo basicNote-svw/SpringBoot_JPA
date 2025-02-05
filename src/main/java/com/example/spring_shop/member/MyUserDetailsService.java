@@ -19,15 +19,26 @@ public class MyUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        var result = memberRepository.findByUserName(username);
+        var result = memberRepository.findByUsername(username);
         System.out.println("result :" + result);
         if(result.isEmpty()) {
             System.out.println("No user found with userName: " + username);
             throw new UsernameNotFoundException("아이디를 다시 확인해주세요");
         }
+        System.out.println(result.get().getUsername());
         var user = result.get();
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("일반유저"));
-        return new User(user.getUserName(), user.getPassword(), authorities);
+        var a = new CustomUser(user.getUsername(), user.getPassword(), authorities);
+        a.displayName = user.getDisplayName();
+        return a;
+    }
+
+}
+
+class CustomUser extends User {
+    public String displayName;
+    public CustomUser(String username, String password, List<GrantedAuthority> authorities) {
+        super(username, password, authorities);
     }
 }
