@@ -8,6 +8,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.HashMap;
 
 @Controller
 @RequiredArgsConstructor
@@ -52,4 +55,14 @@ public class MemberController {
         System.out.println(result.displayName);
         return "mypage";
     }
+
+    @GetMapping("/user/1")
+    @ResponseBody
+    public MemberDTO getUser() {
+        var a = memberRepository.findById(1L);
+        var result = a.get();
+        var data = new MemberDTO(result.getUsername(), result.getDisplayName());
+        return data;    // object 여기 넣으면 스프링이 자동으로 JSON으로 변환해줌
+    }
+
 }
