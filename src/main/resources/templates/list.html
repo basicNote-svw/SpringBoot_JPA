@@ -27,6 +27,15 @@
         </div>
     </div>
 
+<!--    <a href="/list/page/1">1번페이지</a>-->
+<!--    <a href="/list/page/2">2번페이지</a>-->
+<!--    <a href="/list/page/3">3번페이지</a>-->
+    <div class="page-box">
+        <div th:each="pageNum : ${#numbers.sequence(1, totalPages)}">
+            <a th:href="@{/list/page/{num}(num=${pageNum})}" th:text="${pageNum}"></a>
+        </div>
+    </div>
+
     <script>
 //        document.querySelectorAll('.del-btn')[0].addEventListener('click', function(){
             /*

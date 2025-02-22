@@ -37,3 +37,20 @@
     margin-left: 5px;
     cursor: pointer;
 }
+
+.page-box {
+    display: flex;
+    margin-left: 20px;
+}
+
+.page-box div {
+    margin-right: 10px;
+    padding: 5px 10px;
+    border: 1px solid;
+    cursor: pointer;
+}
+
+.page-box div a {
+    text-decoration: none;
+    color: black;
+}

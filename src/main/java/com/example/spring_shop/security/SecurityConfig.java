@@ -26,9 +26,9 @@ public class SecurityConfig {
         );
         http.formLogin((formLogin) -> formLogin.loginPage("/login").defaultSuccessUrl("/"));
 //    .usernameParameter("userName")  // 사용자 정의 필드 이름 변경가능
-        http.csrf(csrf -> csrf.csrfTokenRepository(csrfTokenRepository())
-                .ignoringRequestMatchers("/login")
-        );
+//        http.csrf(csrf -> csrf.csrfTokenRepository(csrfTokenRepository())
+//                .ignoringRequestMatchers("/login")
+//        );
         return http.build();
     }
 

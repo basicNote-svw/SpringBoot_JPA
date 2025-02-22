@@ -1,6 +1,8 @@
 package com.example.spring_shop.item;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,6 +34,20 @@ public class ItemController {
 //        System.out.println(result.get(0).getTitle());   // 셔츠
 //        model.addAttribute("name", "롱스커트");
         model.addAttribute("items", result);
+        return "redirect:/list/page/1";
+    }
+
+    @GetMapping("/list/page/{no}")
+    String getListPage(Model model, @PathVariable Integer no) {
+        Page<Item> result = itemRepository.findPageBy(PageRequest.of(no-1, 5));
+//        model.addAttribute("items", result);
+        System.out.println(result.getTotalPages());
+        System.out.println(result.hasNext());
+        int totalPages = result.getTotalPages();
+        if (totalPages == 0) totalPages = 1;
+
+        model.addAttribute("items", result.getContent());
+        model.addAttribute("totalPages", totalPages);
         return "list";
     }
 
@@ -65,6 +81,7 @@ public class ItemController {
     }
 
     @PostMapping("/add")
+    @CrossOrigin
         // 방법1
 //    String writePost(@RequestParam String title, @RequestParam Integer price) {
 //        System.out.println(title + " " + price);
