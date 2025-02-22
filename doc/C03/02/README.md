@@ -188,6 +188,11 @@ String getListPage(Model model, @PathVariable Integer abc) {
 
 Page말고 Slice 타입도 있음
 ---
+
+| -                    |
+|----------------------|
+| ![이미지](./img/02.png) |
+
 - Page 타입으로 가져오는 것의 단점
 
   - 방금 만든 페이지 방문할 때 마다 SQL 쿼리문 실행되는걸 살펴보면 count 어쩌구라는 SQL 문법도 실행해줌
