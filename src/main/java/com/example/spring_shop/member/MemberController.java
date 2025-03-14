@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.HashMap;
 
@@ -25,7 +26,7 @@ public class MemberController {
     }
 
     @PostMapping("/member")
-    public String addMember(String username, String password, String displayName) throws Exception {
+    public String addMember(String username, String password, String displayName, RedirectAttributes redirectAttributes) throws Exception {
 //        Member member = new Member();
 //        member.setUsername(username);
 ////        var hash = new BCryptPasswordEncoder().encode(password);
@@ -33,8 +34,15 @@ public class MemberController {
 //        member.setPassword(hash);
 //        member.setDisplayName(displayName);
 //        memberRepository.save(member);
-        memberService.saveMember(username, password, displayName);
-        return "redirect:/list";
+        try {
+            memberService.saveMember(username, password, displayName);
+            return "redirect:/list";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            System.out.println(username + " " + password);
+            System.out.println("Length of password: " + password.length());
+            return "redirect:/register";
+        }
     }
 
     @GetMapping("/login")

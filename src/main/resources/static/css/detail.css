@@ -7,3 +7,9 @@
     display : block;
     margin : auto;
 }
+
+input {
+    width: 80%;
+    margin: 0 auto;
+}
+

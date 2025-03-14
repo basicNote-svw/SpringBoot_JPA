@@ -20,15 +20,15 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf((csrf) -> csrf.disable());
+//        http.csrf((csrf) -> csrf.disable());
         http.authorizeHttpRequests((authorize) ->
                 authorize.requestMatchers("/**").permitAll()
         );
         http.formLogin((formLogin) -> formLogin.loginPage("/login").defaultSuccessUrl("/"));
 //    .usernameParameter("userName")  // 사용자 정의 필드 이름 변경가능
-//        http.csrf(csrf -> csrf.csrfTokenRepository(csrfTokenRepository())
-//                .ignoringRequestMatchers("/login")
-//        );
+        http.csrf(csrf -> csrf.csrfTokenRepository(csrfTokenRepository())
+                .ignoringRequestMatchers("/login", "/member", "/comment")
+        );
         return http.build();
     }
 

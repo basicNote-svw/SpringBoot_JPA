@@ -25,9 +25,12 @@
             <div sec:authorize="isAuthenticated()">
                 <a href="/my-page">MyPage</a>
             </div>
-            <div sec:authorize="isAuthenticated()">
-                <a href="/logout">Logout</a>
-            </div>
+<!--            <div sec:authorize="isAuthenticated()">-->
+<!--                <a href="/logout">Logout</a>-->
+<!--            </div>-->
+            <form th:action="@{/logout}" method="post">
+                <button type="submit">로그아웃</button>
+            </form>
         </div>
     </div>
 </body>

@@ -20,5 +20,11 @@
         <p th:text="${data.price} + '원'">70000원</p>
     </div>
 
+    <form action="/comment" method="POST">
+        <input name="content">
+        <input name="parentId" th:value="${data.id}" style="display:none;">
+        <button style="margin: 10px 0 0 680px">전송</button>
+    </form>
+
 </body>
 </html>
